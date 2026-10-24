@@ -1,176 +1,161 @@
-# 🌍 AQI Health Advisory System 
+# 🌍 AQI Health Advisory System
 
-**AI-Powered Personalized Air Quality Health Guidance**
+A small web app that gives personalized health advice based on air quality. You enter your city, the AQI value and your health profile (for example, asthma), and it returns advice taken from WHO and EPA guidelines.
 
-## 🎓 SDG Alignment
-
-**Primary:** SDG 3 (Good Health and Well-being)
-- Reduces health risks from air pollution
-- Provides preventive health guidance
-- Protects vulnerable populations
-
-**Secondary:**
-- SDG 11 (Sustainable Cities) - Urban health management
-- SDG 13 (Climate Action) - Climate health adaptation
+Built during the **AI for Sustainability Virtual Internship** (1M1B, AICTE, IBM SkillsBuild).
 
 ---
 
-## ✨ Features
+## How it works
 
-- 🎯 **Personalized Advisories** - Tailored to health profile (asthma, elderly, children)
-- 📊 **AQI Analysis** - Real-time categorization and risk assessment
-- 🏥 **Health Guidance** - Specific actions based on air quality
-- 😷 **Mask Recommendations** - Appropriate protection for pollution levels
-- 🏃 **Activity Guidance** - Outdoor exercise safety recommendations
-- 🛡️ **Protective Measures** - Actionable steps to reduce exposure
+This project uses **RAG (Retrieval-Augmented Generation) style retrieval**:
 
----
+1. The WHO and EPA health guidelines are split into about 40 small chunks.
+2. Each chunk is converted into an embedding (HuggingFace) and stored in ChromaDB.
+3. When a user sends their AQI and health profile, the Flask backend searches ChromaDB for the most relevant chunks.
+4. The backend puts those chunks together into a personalized advisory and sends it back as JSON.
+5. The frontend shows the result in a color-coded layout.
 
-## 🛠️ Technology Stack
+```
+User input (city, AQI, health profile)
+        ↓
+Flask API
+        ↓
+LangChain + ChromaDB (find relevant guidelines)
+        ↓
+Build the advisory
+        ↓
+JSON response → frontend display
+```
 
-**Frontend:**
-- HTML5, CSS3, Vanilla JavaScript
-- Responsive design, no frameworks needed
-
-**Backend:**
-- Python Flask - Lightweight API
-- LangChain - RAG orchestration
-- ChromaDB - Vector database
-- HuggingFace Embeddings - Free, no API key
-
-**Data:**
-- WHO Air Quality Guidelines
-- EPA Health Advisory Standards
-- ~40 knowledge chunks covering all AQI ranges
+The advice comes from real guidelines, not from a model making things up.
 
 ---
 
-## 🚀 Installation & Setup
+## Features
 
-### Prerequisites:
-- Python 3.8+
-- No API keys needed!
+- Personalized advice for different profiles (asthma, elderly, children)
+- AQI category and risk level
+- Health guidance based on air quality
+- Mask recommendations
+- Outdoor activity advice
+- Steps to reduce exposure
 
-### Steps:
+---
+
+## Tech stack
+
+| Part | Tools |
+| --- | --- |
+| Frontend | HTML, CSS, JavaScript |
+| Backend | Python, Flask |
+| RAG | LangChain, ChromaDB |
+| Embeddings | HuggingFace (free, no API key needed) |
+| Data | WHO Air Quality Guidelines, EPA Health Advisory Standards |
+
+---
+
+## Setup
+
+You need Python 3.8 or higher. No API keys are needed.
+
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/aqi-health-advisor.git
-cd aqi-health-advisor
+# Clone the repository
+git clone https://github.com/oNk2r/aqi-health-guardian.git
+cd aqi-health-guardian
 
-# Create virtual environment
+# Create and activate a virtual environment
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Start backend
+# Start the backend
 python backend.py
 ```
 
-Backend will run on: http://localhost:5000
+The backend runs on `http://localhost:5000`.
 
-### Open Frontend:
-Simply open `index.html` in your browser
+Then open `frontend/index.html` in your browser.
 
 ---
 
-## 📊 Demo
+## Example
 
-### Input:
-- **City:** Delhi
-- **AQI:** 180
-- **Profile:** Person with Asthma
+**Input**
+- City: Delhi
+- AQI: 180
+- Profile: Person with asthma
 
-### Output:
+**Output**
 ```
-🔴 AQI: 180 - Unhealthy
+AQI: 180 - Unhealthy
 
-Health Implications:
-Some members of the general public may experience health effects; 
-members of sensitive groups may experience more serious health effects.
+Health implications:
+Some members of the general public may experience health effects;
+sensitive groups may experience more serious effects.
 
-Recommendations for You:
-People with asthma should avoid prolonged or heavy exertion. 
-Keep quick-relief medicine handy and follow asthma action plan.
+Recommendations for you:
+People with asthma should avoid long or heavy exertion.
+Keep quick-relief medicine handy and follow your asthma action plan.
 
-Outdoor Activities:
-Avoid prolonged outdoor exertion. Consider indoor alternatives.
+Outdoor activities:
+Avoid long outdoor exertion. Consider indoor options.
 
-Protective Measures:
-Wear N95 masks if you must go outside. Use air purifiers indoors.
+Protective measures:
+Wear an N95 mask if you must go outside. Use an air purifier indoors.
 
-Mask Recommendation:
-N95 mask for everyone during outdoor exposure
+Mask recommendation:
+N95 mask for everyone during outdoor exposure.
 ```
 
 ---
 
-## 🏗️ Architecture
+## Limitations
 
-User Input (City, AQI, Health Profile)
--->
-Flask API Endpoint
--->
-RAG System (LangChain + ChromaDB)
--->
-Vector Search: Find relevant health guidelines
--->
-Context Assembly: Combine relevant information
--->
-Advisory Generation:Personalized recommendations
--->
-JSON Response to Frontend
--->
-Display: Color-coded, categorized advisory
+- **Not medical advice.** Please talk to a doctor for health decisions.
+- **AQI is entered by the user.** The app does not read live data from air quality sensors or APIs.
+- **Static knowledge.** The advice is based on a fixed set of guidelines (about 40 chunks).
+- **No LLM.** The advice is built from retrieved guidelines only.
 
+## Possible improvements
+
+- Fetch live AQI for a city from an air quality API
+- Add an LLM to phrase the answer, while still using the retrieved guidelines
+- Add automated tests
+- Support more health profiles
 
 ---
 
-## ⚖️ Responsible AI Considerations
+## Project structure
 
-### Fairness:
-- Uses WHO/EPA standards applicable globally
-- No bias based on location, demographics
-- Equal access to health information
-
-### Transparency:
-- Clear explanation of AQI categories
-- Source attribution (WHO, EPA guidelines)
-- No hidden decision-making logic
-
-### Privacy:
-- No user data stored
-- No tracking or analytics
-- Runs completely offline-capable
-
-### Limitations:
-- **Not medical advice** - Consult healthcare professionals
-- **General guidelines** - Individual needs may vary
-- **Static data** - Based on established health standards
-- **No real-time sensors** - Relies on user-provided AQI
-
-### Safety:
-- Conservative recommendations for safety
-- Clear warnings for hazardous conditions
-- Emergency guidance included
-
-
----
-
-## 📝 Project Structure
 ```
-aqi-health-advisory-system/
-│
+aqi-health-guardian/
 ├── frontend/
 │   ├── index.html
 │   ├── styles.css
 │   └── script.js
-├── backend.py 
 ├── data/
 │   └── health_guidelines.txt
+├── backend.py
 ├── requirements.txt
 ├── README.md
 └── .gitignore
 ```
 
+---
+
+## Responsible AI
+
+- **Fairness:** uses WHO and EPA standards that apply everywhere.
+- **Transparency:** sources are named and AQI categories are explained.
+- **Privacy:** no user data is stored and nothing is tracked.
+- **Safety:** recommendations are cautious, with clear warnings for hazardous air.
+
+## SDG alignment
+
+- **Primary:** SDG 3, Good Health and Well-being
+- **Secondary:** SDG 11 (Sustainable Cities), SDG 13 (Climate Action)
+
+---
